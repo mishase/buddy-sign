@@ -24,7 +24,6 @@
    [buddy.core.dsa :as dsa]
    [buddy.core.mac :as mac]
    [buddy.sign.util :as util]
-   [buddy.util.ecdsa :refer [transcode-to-der transcode-to-concat]]
    [cheshire.core :as json]
    [clojure.string :as str]))
 
@@ -51,17 +50,6 @@
            :verifier #(dsa/verify %1 %2 {:alg :rsassa-pss+sha384 :key %3})}
    :ps512 {:signer   #(dsa/sign %1 {:alg :rsassa-pss+sha512 :key %2})
            :verifier #(dsa/verify %1 %2 {:alg :rsassa-pss+sha512 :key %3})}
-
-   ;; ECDSA with signature conversions
-   :es256 {:signer   #(-> (dsa/sign %1 {:alg :ecdsa+sha256 :key %2})
-                          (transcode-to-concat 64))
-           :verifier #(dsa/verify %1 (transcode-to-der %2) {:alg :ecdsa+sha256 :key %3})}
-   :es384 {:signer   #(-> (dsa/sign %1 {:alg :ecdsa+sha384 :key %2})
-                          (transcode-to-concat 96))
-           :verifier #(dsa/verify %1 (transcode-to-der %2) {:alg :ecdsa+sha384 :key %3})}
-   :es512 {:signer   #(-> (dsa/sign %1 {:alg :ecdsa+sha512 :key %2})
-                          (transcode-to-concat 132))
-           :verifier #(dsa/verify %1 (transcode-to-der %2) {:alg :ecdsa+sha512 :key %3})}
 
    :eddsa {:signer   #(dsa/sign %1 {:alg :eddsa :key %2})
            :verifier #(dsa/verify %1 %2 {:alg :eddsa :key %3})}})
